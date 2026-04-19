@@ -1,0 +1,25 @@
+{
+  "name": "growth-intelligence",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "db:migrate": "turbo run db:migrate --filter=@growth/db",
+    "db:generate": "turbo run db:generate --filter=@growth/db",
+    "db:studio": "turbo run db:studio --filter=@growth/db"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3",
+    "typescript": "^5.5.4",
+    "prettier": "^3.3.3"
+  },
+  "packageManager": "pnpm@9.12.3",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

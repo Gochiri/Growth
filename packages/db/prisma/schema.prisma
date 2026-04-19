@@ -1,0 +1,407 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum WebhookSource {
+  meta
+  ghl
+  instagram
+}
+
+enum AdEventType {
+  impression
+  click
+  video_view
+  lead
+  conversion
+  purchase
+  add_to_cart
+  initiate_checkout
+}
+
+enum CrmEventType {
+  contact_created
+  contact_updated
+  appointment_scheduled
+  appointment_completed
+  appointment_cancelled
+  pipeline_stage_changed
+  deal_won
+  deal_lost
+  form_submitted
+  sms_sent
+  sms_received
+  email_sent
+  email_opened
+  call_completed
+}
+
+enum AttributionModel {
+  first_touch
+  last_touch
+  linear
+  time_decay
+  position_based
+}
+
+enum ReportStatus {
+  pending
+  generating
+  completed
+  failed
+}
+
+enum CampaignSource {
+  meta
+  ghl
+  unified
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
+model Contact {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  // GHL identity
+  ghlContactId  String? @unique @map("ghl_contact_id")
+  ghlLocationId String? @map("ghl_location_id")
+
+  // Meta identity
+  metaUserHash String? @map("meta_user_hash")
+  metaPixelId  String? @map("meta_pixel_id")
+
+  // Core identity
+  email     String?
+  phone     String?
+  firstName String? @map("first_name")
+  lastName  String? @map("last_name")
+
+  // Geo
+  city     String?
+  state    String?
+  country  String? @default("US")
+  timezone String?
+
+  // Attribution origin
+  firstTouchSource WebhookSource? @map("first_touch_source")
+  firstTouchAt     DateTime?      @map("first_touch_at") @db.Timestamptz()
+  utmSource        String?        @map("utm_source")
+  utmMedium        String?        @map("utm_medium")
+  utmCampaign      String?        @map("utm_campaign")
+  utmContent       String?        @map("utm_content")
+
+  // Lifecycle
+  lifecycleStage String?  @map("lifecycle_stage")
+  leadScore      Int      @default(0) @map("lead_score")
+  isCustomer     Boolean  @default(false) @map("is_customer")
+
+  // Raw payloads
+  metaRaw Json @default("{}") @map("meta_raw")
+  ghlRaw  Json @default("{}") @map("ghl_raw")
+
+  // Timestamps + soft delete
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz()
+
+  // Relations
+  adEvents              AdEvent[]
+  crmEvents             CrmEvent[]
+  attributionTouchpoints AttributionTouchpoint[]
+  strategicReports       StrategicReport[]
+
+  @@index([metaUserHash], map: "idx_contacts_meta_hash")
+  @@index([firstTouchAt(sort: Desc)], map: "idx_contacts_first_touch")
+  @@index([lifecycleStage], map: "idx_contacts_lifecycle")
+  @@map("contacts")
+}
+
+model Campaign {
+  id     String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  source CampaignSource
+
+  // External IDs
+  metaCampaignId String? @unique @map("meta_campaign_id")
+  metaAdsetId    String? @map("meta_adset_id")
+  metaAdId       String? @map("meta_ad_id")
+  ghlPipelineId  String? @unique @map("ghl_pipeline_id")
+
+  name   String
+  status String @default("active")
+
+  // Budget & spend
+  dailyBudgetCents    Int?   @map("daily_budget_cents")
+  lifetimeBudgetCents Int?   @map("lifetime_budget_cents")
+  totalSpendCents     BigInt @default(0) @map("total_spend_cents")
+
+  // GHL pipeline metadata
+  ghlPipelineStages Json @default("[]") @map("ghl_pipeline_stages")
+
+  // Targeting snapshot
+  targetingSnapshot Json @default("{}") @map("targeting_snapshot")
+
+  // Dates
+  startedAt DateTime? @map("started_at") @db.Timestamptz()
+  endedAt   DateTime? @map("ended_at") @db.Timestamptz()
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz()
+
+  // Relations
+  adEvents              AdEvent[]
+  crmEvents             CrmEvent[]
+  attributionTouchpoints AttributionTouchpoint[]
+  strategicReports       StrategicReport[]
+
+  @@index([status, source], map: "idx_campaigns_status")
+  @@index([totalSpendCents(sort: Desc)], map: "idx_campaigns_spend")
+  @@map("campaigns")
+}
+
+model WebhookIngestion {
+  id     String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  source WebhookSource
+
+  idempotencyKey String @map("idempotency_key")
+
+  // HTTP envelope
+  rawHeaders Json @default("{}") @map("raw_headers")
+  rawBody    Json @map("raw_body")
+  contentHash String @map("content_hash")
+
+  // Processing lifecycle
+  receivedAt      DateTime  @default(now()) @map("received_at") @db.Timestamptz()
+  processedAt     DateTime? @map("processed_at") @db.Timestamptz()
+  processingError String?   @map("processing_error")
+  retryCount      Int       @default(0) @map("retry_count")
+  queueJobId      String?   @map("queue_job_id")
+
+  // Produced event
+  producedEventType String? @map("produced_event_type")
+  producedEventId   String? @map("produced_event_id") @db.Uuid
+
+  // Relations
+  adEvents  AdEvent[]
+  crmEvents CrmEvent[]
+
+  @@unique([source, idempotencyKey], map: "idx_webhook_idempotency")
+  @@index([receivedAt], map: "idx_webhook_unprocessed")
+  @@index([source, receivedAt(sort: Desc)], map: "idx_webhook_source_received")
+  @@map("webhook_ingestions")
+}
+
+model AdEvent {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  // Source linkage
+  ingestionId String? @map("ingestion_id") @db.Uuid
+  campaignId  String? @map("campaign_id") @db.Uuid
+  contactId   String? @map("contact_id") @db.Uuid
+
+  // Meta identifiers
+  metaEventId    String @map("meta_event_id")
+  metaPixelId    String @map("meta_pixel_id")
+  metaCampaignId String? @map("meta_campaign_id")
+  metaAdsetId    String? @map("meta_adset_id")
+  metaAdId       String? @map("meta_ad_id")
+
+  // Event classification
+  eventType  AdEventType @map("event_type")
+  eventTime  DateTime    @map("event_time") @db.Timestamptz()
+  receivedAt DateTime    @default(now()) @map("received_at") @db.Timestamptz()
+
+  // Metric values
+  spendCents   Int @default(0) @map("spend_cents")
+  impressions  Int @default(0)
+  clicks       Int @default(0)
+  reach        Int @default(0)
+
+  // Conversion values
+  conversionValueCents BigInt  @default(0) @map("conversion_value_cents")
+  currency             String  @default("USD")
+
+  // User context (hashed)
+  userEmailHash String? @map("user_email_hash")
+  userPhoneHash String? @map("user_phone_hash")
+  userIp        String? @map("user_ip")
+  userAgent     String? @map("user_agent")
+  browserId     String? @map("browser_id")
+  clickId       String? @map("click_id")
+  eventSourceUrl String? @map("event_source_url")
+
+  // Custom data
+  customData Json @default("{}") @map("custom_data")
+
+  // Meta rate limit snapshot
+  appUsageSnapshot Json @default("{}") @map("app_usage_snapshot")
+
+  // Relations
+  ingestion WebhookIngestion? @relation(fields: [ingestionId], references: [id])
+  campaign  Campaign?         @relation(fields: [campaignId], references: [id])
+  contact   Contact?          @relation(fields: [contactId], references: [id])
+  attributionTouchpoints AttributionTouchpoint[]
+
+  @@unique([metaEventId, metaPixelId], map: "idx_ad_events_meta_dedup")
+  @@index([campaignId, eventTime(sort: Desc)], map: "idx_ad_events_campaign")
+  @@index([contactId, eventTime(sort: Desc)], map: "idx_ad_events_contact")
+  @@index([eventType, eventTime(sort: Desc)], map: "idx_ad_events_type_time")
+  @@index([metaPixelId, eventTime(sort: Desc)], map: "idx_ad_events_pixel_time")
+  @@map("ad_events")
+}
+
+model CrmEvent {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  // Source linkage
+  ingestionId String? @map("ingestion_id") @db.Uuid
+  campaignId  String? @map("campaign_id") @db.Uuid
+  contactId   String? @map("contact_id") @db.Uuid
+
+  // GHL identifiers
+  ghlEventId      String @map("ghl_event_id")
+  ghlLocationId   String @map("ghl_location_id")
+  ghlContactId    String? @map("ghl_contact_id")
+  ghlPipelineId   String? @map("ghl_pipeline_id")
+  ghlStageId      String? @map("ghl_stage_id")
+  ghlStageName    String? @map("ghl_stage_name")
+
+  // Deal / appointment references
+  ghlOpportunityId  String? @map("ghl_opportunity_id")
+  ghlAppointmentId  String? @map("ghl_appointment_id")
+
+  // Event classification
+  eventType  CrmEventType @map("event_type")
+  eventTime  DateTime     @map("event_time") @db.Timestamptz()
+  receivedAt DateTime     @default(now()) @map("received_at") @db.Timestamptz()
+
+  // Financial context
+  dealValueCents BigInt @default(0) @map("deal_value_cents")
+  currency       String @default("USD")
+
+  // Stage transition
+  previousStageName  String? @map("previous_stage_name")
+  daysInPrevStage    Int?    @map("days_in_prev_stage")
+
+  // Contact snapshot at event time
+  contactEmail String? @map("contact_email")
+  contactPhone String? @map("contact_phone")
+  contactName  String? @map("contact_name")
+
+  // Raw GHL payload
+  rawData Json @default("{}") @map("raw_data")
+
+  // Relations
+  ingestion WebhookIngestion? @relation(fields: [ingestionId], references: [id])
+  campaign  Campaign?         @relation(fields: [campaignId], references: [id])
+  contact   Contact?          @relation(fields: [contactId], references: [id])
+  attributionTouchpoints    AttributionTouchpoint[] @relation("CrmEventTouchpoints")
+  conversionTouchpoints     AttributionTouchpoint[] @relation("ConversionTouchpoints")
+
+  @@unique([ghlEventId, ghlLocationId], map: "idx_crm_events_ghl_dedup")
+  @@index([contactId, eventTime(sort: Desc)], map: "idx_crm_events_contact")
+  @@index([campaignId, eventTime(sort: Desc)], map: "idx_crm_events_campaign")
+  @@index([eventType, eventTime(sort: Desc)], map: "idx_crm_events_type_time")
+  @@index([ghlPipelineId, ghlStageName, eventTime(sort: Desc)], map: "idx_crm_events_stage")
+  @@map("crm_events")
+}
+
+model AttributionTouchpoint {
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  contactId  String  @map("contact_id") @db.Uuid
+  campaignId String? @map("campaign_id") @db.Uuid
+
+  // Linked events
+  adEventId  String? @map("ad_event_id") @db.Uuid
+  crmEventId String? @map("crm_event_id") @db.Uuid
+
+  // Attribution weights per model (0.0000 – 1.0000)
+  firstTouchWeight   Decimal @default(0) @map("first_touch_weight") @db.Decimal(5, 4)
+  lastTouchWeight    Decimal @default(0) @map("last_touch_weight") @db.Decimal(5, 4)
+  linearWeight       Decimal @default(0) @map("linear_weight") @db.Decimal(5, 4)
+  timeDecayWeight    Decimal @default(0) @map("time_decay_weight") @db.Decimal(5, 4)
+  positionWeight     Decimal @default(0) @map("position_weight") @db.Decimal(5, 4)
+
+  // Journey position
+  touchpointSequence   Int @map("touchpoint_sequence")
+  totalTouchpoints     Int @map("total_touchpoints")
+  daysBeforeConversion Int? @map("days_before_conversion")
+
+  // Conversion anchor
+  conversionCrmEventId   String? @map("conversion_crm_event_id") @db.Uuid
+  conversionType         String? @map("conversion_type")
+  conversionValueCents   BigInt  @default(0) @map("conversion_value_cents")
+
+  // Metadata
+  modelVersion String   @default("v1") @map("model_version")
+  computedAt   DateTime @default(now()) @map("computed_at") @db.Timestamptz()
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  // Relations
+  contact             Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  campaign            Campaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  adEvent             AdEvent?  @relation(fields: [adEventId], references: [id], onDelete: SetNull)
+  crmEvent            CrmEvent? @relation("CrmEventTouchpoints", fields: [crmEventId], references: [id], onDelete: SetNull)
+  conversionCrmEvent  CrmEvent? @relation("ConversionTouchpoints", fields: [conversionCrmEventId], references: [id], onDelete: Cascade)
+
+  @@index([contactId, touchpointSequence], map: "idx_attribution_contact")
+  @@index([campaignId, firstTouchWeight(sort: Desc)], map: "idx_attribution_campaign")
+  @@index([adEventId], map: "idx_attribution_ad_event")
+  @@index([crmEventId], map: "idx_attribution_crm_event")
+  @@index([conversionCrmEventId], map: "idx_attribution_conversion")
+  @@map("attribution_touchpoints")
+}
+
+model StrategicReport {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  // Scope
+  campaignId String? @map("campaign_id") @db.Uuid
+  contactId  String? @map("contact_id") @db.Uuid
+
+  // Report identity
+  reportType String       @map("report_type")
+  title      String
+  status     ReportStatus @default(pending)
+
+  // Analyst input snapshot
+  analystInput Json @default("{}") @map("analyst_input")
+
+  // Claude output
+  reportMarkdown  String? @map("report_markdown")
+  strategicPlays  Json    @default("[]") @map("strategic_plays")
+  recommendations Json    @default("[]") @map("recommendations")
+  confidenceScore Decimal? @map("confidence_score") @db.Decimal(4, 3)
+
+  // Claude API metadata
+  claudeModel        String? @map("claude_model")
+  claudeInputTokens  Int?    @map("claude_input_tokens")
+  claudeOutputTokens Int?    @map("claude_output_tokens")
+  claudeStopReason   String? @map("claude_stop_reason")
+  claudeRawResponse  Json    @default("{}") @map("claude_raw_response")
+
+  // Timing
+  generationStartedAt DateTime? @map("generation_started_at") @db.Timestamptz()
+  generationEndedAt   DateTime? @map("generation_ended_at") @db.Timestamptz()
+
+  errorMessage String? @map("error_message")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  // Relations
+  campaign Campaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  contact  Contact?  @relation(fields: [contactId], references: [id], onDelete: SetNull)
+
+  @@index([campaignId, createdAt(sort: Desc)], map: "idx_reports_campaign")
+  @@index([contactId, createdAt(sort: Desc)], map: "idx_reports_contact")
+  @@index([reportType, status, createdAt(sort: Desc)], map: "idx_reports_type_status")
+  @@index([status, createdAt], map: "idx_reports_pending")
+  @@map("strategic_reports")
+}
