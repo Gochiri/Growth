@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Growth Intelligence — Preview</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        meta: { DEFAULT: '#1877F2', light: '#E7F0FD' },
+        ghl: { DEFAULT: '#0E9F6E', light: '#DEF7EC' },
+      }
+    }
+  }
+}
+</script>
+<style>
+  body { background: #030712; }
+  .timeline-line { border-left: 2px solid #1f2937; margin-left: 5px; }
+</style>
+</head>
+<body class="text-gray-100 min-h-screen font-sans">
+
+<!-- HEADER -->
+<header class="border-b border-gray-800 px-4 py-3 flex items-center justify-between sticky top-0 bg-gray-950 z-10">
+  <div>
+    <p class="text-xs text-gray-400 font-semibold tracking-widest uppercase">Growth Intelligence</p>
+    <p class="text-xs text-gray-600">AI-native growth OS</p>
+  </div>
+  <nav class="flex gap-4 text-xs">
+    <a href="#contacts" class="text-white font-semibold">Contacts</a>
+    <a href="#reports" class="text-gray-400">Reports</a>
+  </nav>
+</header>
+
+<!-- CONTACT HEADER -->
+<div class="px-4 py-4 bg-gray-900 border-b border-gray-800">
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 rounded-full bg-blue-900 flex items-center justify-center text-sm font-bold text-blue-200">JD</div>
+    <div class="flex-1 min-w-0">
+      <p class="text-sm font-semibold text-white">John Doe</p>
+      <p class="text-xs text-gray-400">john@example.com · +1 555 123 4567</p>
+    </div>
+    <div class="text-right">
+      <p class="text-xs text-gray-500">Lead Score</p>
+      <p class="text-xl font-bold text-green-400">82</p>
+    </div>
+  </div>
+  <div class="flex gap-2 mt-3 flex-wrap">
+    <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">Stage: Proposal Sent</span>
+    <span class="text-xs bg-blue-950 text-blue-400 border border-blue-800 px-2 py-1 rounded">First touch: Meta</span>
+    <span class="text-xs bg-green-950 text-green-400 border border-green-800 px-2 py-1 rounded">Customer ✓</span>
+  </div>
+</div>
+
+<!-- TAB BAR -->
+<div class="flex border-b border-gray-800 bg-gray-950 sticky top-[57px] z-10">
+  <button onclick="showTab('timeline')" id="tab-timeline" class="flex-1 py-2 text-xs font-semibold text-white border-b-2 border-blue-500">Timeline</button>
+  <button onclick="showTab('plays')" id="tab-plays" class="flex-1 py-2 text-xs font-semibold text-gray-400 border-b-2 border-transparent">AI Plays <span class="bg-red-900 text-red-300 rounded-full px-1.5 py-0.5 ml-1 text-[10px]">3</span></button>
+</div>
+
+<!-- TIMELINE TAB -->
+<div id="tab-timeline-content" class="px-4 py-4">
+
+  <!-- Filter chips -->
+  <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
+    <button class="text-xs bg-gray-700 text-white px-3 py-1 rounded-full whitespace-nowrap">All Events</button>
+    <button class="text-xs bg-gray-800 text-gray-400 px-3 py-1 rounded-full whitespace-nowrap">Meta</button>
+    <button class="text-xs bg-gray-800 text-gray-400 px-3 py-1 rounded-full whitespace-nowrap">GHL</button>
+    <button class="text-xs bg-gray-800 text-gray-400 px-3 py-1 rounded-full whitespace-nowrap">Ads only</button>
+    <button class="text-xs bg-gray-800 text-gray-400 px-3 py-1 rounded-full whitespace-nowrap">CRM only</button>
+  </div>
+
+  <!-- Timeline events -->
+  <div class="space-y-0">
+
+    <!-- Event 1 -->
+    <div class="flex gap-3">
+      <div class="flex flex-col items-center">
+        <div class="w-2.5 h-2.5 rounded-full bg-green-500 mt-2 flex-shrink-0"></div>
+        <div class="w-px bg-gray-800 flex-1 mt-1"></div>
+      </div>
+      <div class="pb-4 flex-1">
+        <div class="bg-gray-900 border border-green-900 rounded-lg px-3 py-2.5">
+          <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs bg-green-950 text-green-400 border border-green-800 px-1.5 py-0.5 rounded">GHL</span>
+              <span class="text-xs text-gray-500">deal_won</span>
+            </div>
+            <span class="text-xs text-gray-600">2h ago</span>
+          </div>
+          <p class="text-sm font-semibold text-white">Deal Won 🏆</p>
+          <p class="text-xs text-gray-400 mt-0.5">Value: <span class="text-green-400 font-semibold">$4,500</span> · Proposal → Closed Won</p>
+          <p class="text-xs text-gray-600 mt-1">via Q4 Lead Gen — Homeowners</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event 2 -->
+    <div class="flex gap-3">
+      <div class="flex flex-col items-center">
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-2 flex-shrink-0"></div>
+        <div class="w-px bg-gray-800 flex-1 mt-1"></div>
+      </div>
+      <div class="pb-4 flex-1">
+        <div class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2.5">
+          <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-1.5 py-0.5 rounded">GHL</span>
+              <span class="text-xs text-gray-500">appointment_completed</span>
+            </div>
+            <span class="text-xs text-gray-600">1d ago</span>
+          </div>
+          <p class="text-sm font-semibold text-white">Appointment Completed</p>
+          <p class="text-xs text-gray-400 mt-0.5">Stage: Proposal Sent</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event 3 -->
+    <div class="flex gap-3">
+      <div class="flex flex-col items-center">
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-2 flex-shrink-0"></div>
+        <div class="w-px bg-gray-800 flex-1 mt-1"></div>
+      </div>
+      <div class="pb-4 flex-1">
+        <div class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2.5">
+          <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-1.5 py-0.5 rounded">GHL</span>
+              <span class="text-xs text-gray-500">pipeline_stage_changed</span>
+            </div>
+            <span class="text-xs text-gray-600">3d ago</span>
+          </div>
+          <p class="text-sm font-semibold text-white">Stage → Proposal Sent</p>
+          <p class="text-xs text-gray-400 mt-0.5">Discovery Call → Proposal Sent · 4 days in prev stage</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event 4 -->
+    <div class="flex gap-3">
+      <div class="flex flex-col items-center">
+        <div class="w-2.5 h-2.5 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
+        <div class="w-px bg-gray-800 flex-1 mt-1"></div>
+      </div>
+      <div class="pb-4 flex-1">
+        <div class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2.5">
+          <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs bg-blue-950 text-blue-400 border border-blue-800 px-1.5 py-0.5 rounded">Meta</span>
+              <span class="text-xs text-gray-500">conversion</span>
+            </div>
+            <span class="text-xs text-gray-600">5d ago</span>
+          </div>
+          <p class="text-sm font-semibold text-white">Conversion</p>
+          <p class="text-xs text-gray-400 mt-0.5">Value: $1,200 · utm_campaign: q4-homeowners</p>
+          <p class="text-xs text-gray-600 mt-1">via Q4 Lead Gen — Homeowners</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event 5 -->
+    <div class="flex gap-3">
+      <div class="flex flex-col items-center">
+        <div class="w-2.5 h-2.5 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
+        <div class="w-px bg-gray-800 flex-1 mt-1"></div>
+      </div>
+      <div class="pb-4 flex-1">
+        <div class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2.5">
+          <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs bg-blue-950 text-blue-400 border border-blue-800 px-1.5 py-0.5 rounded">Meta</span>
+              <span class="text-xs text-gray-500">lead</span>
+            </div>
+            <span class="text-xs text-gray-600">6d ago</span>
+          </div>
+          <p class="text-sm font-semibold text-white">Lead Generated</p>
+          <p class="text-xs text-gray-400 mt-0.5">Landing: /q4-homeowners · fbc: fb.1.1714...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event 6 -->
+    <div class="flex gap-3">
+      <div class="flex flex-col items-center">
+        <div class="w-2.5 h-2.5 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
+        <div class="w-px bg-gray-800 flex-1 mt-1"></div>
+      </div>
+      <div class="pb-4 flex-1">
+        <div class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2.5">
+          <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs bg-blue-950 text-blue-400 border border-blue-800 px-1.5 py-0.5 rounded">Meta</span>
+              <span class="text-xs text-gray-500">click</span>
+            </div>
+            <span class="text-xs text-gray-600">6d ago</span>
+          </div>
+          <p class="text-sm font-semibold text-white">Ad Click</p>
+          <p class="text-xs text-gray-400 mt-0.5">Adset: Homeowners 35-55 · Creative: Video v3</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PLAYS TAB (hidden by default) -->
+<div id="tab-plays-content" class="px-4 py-4 hidden">
+
+  <!-- Play 1: Critical -->
+  <div class="bg-gray-900 border border-red-900 rounded-xl p-4 mb-3">
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-xs bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded-full font-semibold">🔥 Critical</span>
+      <span class="text-xs text-gray-600">94% confidence</span>
+    </div>
+    <p class="text-sm font-bold text-white mb-1">$8,500 in spend with zero CRM closes</p>
+    <p class="text-xs text-gray-400 leading-relaxed mb-3">Campaign "Q4 Lead Gen — Homeowners" has spent $8,500 in 30 days with ROAS of 0.0 and zero deal_won events. Ad spend is reaching clicks but not penetrating the sales funnel.</p>
+    <div class="flex flex-wrap gap-1.5 mb-3">
+      <span class="text-xs bg-gray-800 text-gray-300 px-2 py-0.5 rounded font-mono">Spend: $8,500</span>
+      <span class="text-xs bg-gray-800 text-gray-300 px-2 py-0.5 rounded font-mono">ROAS: 0.0</span>
+      <span class="text-xs bg-gray-800 text-gray-300 px-2 py-0.5 rounded font-mono">Closes: 0</span>
+    </div>
+    <div class="border-t border-gray-800 pt-3">
+      <p class="text-xs text-gray-500 mb-1">Suggested action</p>
+      <p class="text-xs text-white font-semibold">Pause campaign immediately and audit funnel attribution</p>
+    </div>
+  </div>
+
+  <!-- Play 2: Warning -->
+  <div class="bg-gray-900 border border-amber-900 rounded-xl p-4 mb-3">
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-xs bg-amber-950 text-amber-400 border border-amber-800 px-2 py-0.5 rounded-full font-semibold">⚡ Warning</span>
+      <span class="text-xs text-gray-600">87% confidence</span>
+    </div>
+    <p class="text-sm font-bold text-white mb-1">High CTR but no closes — funnel mismatch</p>
+    <p class="text-xs text-gray-400 leading-relaxed mb-3">Retargeting campaign shows CTR of 5.5% (above 2% threshold) with 9,900 clicks, but close rate is only 1.2%. Clicks are not converting past the landing page.</p>
+    <div class="flex flex-wrap gap-1.5 mb-3">
+      <span class="text-xs bg-gray-800 text-gray-300 px-2 py-0.5 rounded font-mono">CTR: 5.5%</span>
+      <span class="text-xs bg-gray-800 text-gray-300 px-2 py-0.5 rounded font-mono">Clicks: 9,900</span>
+      <span class="text-xs bg-gray-800 text-gray-300 px-2 py-0.5 rounded font-mono">Close rate: 1.2%</span>
+    </div>
+    <div class="border-t border-gray-800 pt-3">
+      <p class="text-xs text-gray-500 mb-1">Suggested action</p>
+      <p class="text-xs text-white font-semibold">Audit landing page offer alignment with ad creative messaging</p>
+    </div>
+  </div>
+
+  <!-- Play 3: Opportunity -->
+  <div class="bg-gray-900 border border-emerald-900 rounded-xl p-4 mb-3">
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-full font-semibold">⬆ Opportunity</span>
+      <span class="text-xs text-gray-600">91% confidence</span>
+    </div>
+    <p class="text-sm font-bold text-white mb-1">Retargeting closing 3x faster than average</p>
+    <p class="text-xs text-gray-400 leading-relaxed mb-3">Retargeting — Website Visitors is closing deals in avg 6 days vs account average of 18 days. This 3x velocity spike indicates highly qualified intent. Scale now.</p>
+    <div class="flex flex-wrap gap-1.5 mb-3">
+      <span class="text-xs bg-gray-800 text-gray-300 px-2 py-0.5 rounded font-mono">Avg close: 6d</span>
+      <span class="text-xs bg-gray-800 text-gray-300 px-2 py-0.5 rounded font-mono">Acct avg: 18d</span>
+      <span class="text-xs bg-gray-800 text-gray-300 px-2 py-0.5 rounded font-mono">ROAS: 12.7x</span>
+    </div>
+    <div class="border-t border-gray-800 pt-3">
+      <p class="text-xs text-gray-500 mb-1">Suggested action</p>
+      <p class="text-xs text-white font-semibold">Increase retargeting budget 3x and build lookalike from converters</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV (contacts list preview) -->
+<div id="contacts" class="border-t border-gray-800 mt-4">
+  <div class="px-4 py-3 flex items-center justify-between">
+    <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest">All Contacts</p>
+    <p class="text-xs text-gray-600">847 tracked</p>
+  </div>
+  <div class="divide-y divide-gray-800">
+    <a href="#" class="flex items-center justify-between px-4 py-3 hover:bg-gray-900 transition-colors">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center text-xs font-bold text-blue-200">JD</div>
+        <div>
+          <p class="text-sm font-medium text-white">John Doe</p>
+          <p class="text-xs text-gray-500">john@example.com</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 text-right">
+        <span class="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded">Closed Won</span>
+        <p class="text-sm font-bold text-green-400">82</p>
+      </div>
+    </a>
+    <a href="#" class="flex items-center justify-between px-4 py-3 hover:bg-gray-900 transition-colors">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-purple-900 flex items-center justify-center text-xs font-bold text-purple-200">SM</div>
+        <div>
+          <p class="text-sm font-medium text-white">Sarah Miller</p>
+          <p class="text-xs text-gray-500">sarah@acme.com</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 text-right">
+        <span class="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded">Proposal Sent</span>
+        <p class="text-sm font-bold text-yellow-400">61</p>
+      </div>
+    </a>
+    <a href="#" class="flex items-center justify-between px-4 py-3 hover:bg-gray-900 transition-colors">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-xs font-bold text-gray-200">RK</div>
+        <div>
+          <p class="text-sm font-medium text-white">Robert Kim</p>
+          <p class="text-xs text-gray-500">robert@startup.io</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 text-right">
+        <span class="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded">Discovery Call</span>
+        <p class="text-sm font-bold text-gray-400">28</p>
+      </div>
+    </a>
+  </div>
+</div>
+
+<script>
+function showTab(tab) {
+  document.getElementById('tab-timeline-content').classList.add('hidden');
+  document.getElementById('tab-plays-content').classList.add('hidden');
+  document.getElementById('tab-timeline').classList.remove('text-white','border-blue-500');
+  document.getElementById('tab-timeline').classList.add('text-gray-400','border-transparent');
+  document.getElementById('tab-plays').classList.remove('text-white','border-blue-500');
+  document.getElementById('tab-plays').classList.add('text-gray-400','border-transparent');
+
+  document.getElementById('tab-' + tab + '-content').classList.remove('hidden');
+  document.getElementById('tab-' + tab).classList.add('text-white','border-blue-500');
+  document.getElementById('tab-' + tab).classList.remove('text-gray-400','border-transparent');
+}
+</script>
+
+</body>
+</html>
