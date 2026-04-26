@@ -4,7 +4,7 @@ import { formatRelativeTime } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-const STATUS_STYLES = {
+const STATUS_STYLES: Record<string, string> = {
   pending: "bg-gray-800 text-gray-400",
   generating: "bg-blue-950 text-blue-400 animate-pulse",
   completed: "bg-green-950 text-green-400",
@@ -12,7 +12,15 @@ const STATUS_STYLES = {
 };
 
 export default async function ReportsPage() {
-  const { data: reports, total } = await getReports(1, 30);
+  let reports: Awaited<ReturnType<typeof getReports>>["data"] = [];
+  let total = 0;
+  try {
+    const result = await getReports(1, 30);
+    reports = result.data;
+    total = result.total;
+  } catch {
+    // API offline — show empty state
+  }
 
   return (
     <div className="min-h-screen bg-gray-950">

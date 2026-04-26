@@ -5,7 +5,15 @@ import { formatRelativeTime } from "@/lib/utils";
 export const dynamic = "force-dynamic";
 
 export default async function ContactsPage() {
-  const { data: contacts, total } = await getContacts(1, 30);
+  let contacts: Awaited<ReturnType<typeof getContacts>>["data"] = [];
+  let total = 0;
+  try {
+    const result = await getContacts(1, 30);
+    contacts = result.data;
+    total = result.total;
+  } catch {
+    // API offline — show empty state
+  }
 
   return (
     <div className="min-h-screen bg-gray-950">

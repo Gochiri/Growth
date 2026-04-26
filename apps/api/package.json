@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
-    "@fastify/type-provider-zod": "^4.0.2",
     "@growth/config": "workspace:*",
     "@growth/db": "workspace:*",
     "@growth/types": "workspace:*",
