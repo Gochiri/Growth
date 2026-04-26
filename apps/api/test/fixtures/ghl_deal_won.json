@@ -1,0 +1,18 @@
+{
+  "type": "OpportunityUpdate",
+  "locationId": "loc_test_001",
+  "id": "ghl_evt_deal_won_001",
+  "contactId": "ghl_contact_abc123",
+  "pipelineId": "pipe_main_001",
+  "pipelineStageId": "stage_closed_won",
+  "pipelineStageName": "Closed Won",
+  "previousPipelineStageName": "Proposal Sent",
+  "opportunityId": "opp_001",
+  "monetaryValue": 4500.00,
+  "email": "john@example.com",
+  "phone": "+15551234567",
+  "firstName": "John",
+  "lastName": "Doe",
+  "name": "John Doe",
+  "dateAdded": "2024-04-25T14:30:00Z"
+}

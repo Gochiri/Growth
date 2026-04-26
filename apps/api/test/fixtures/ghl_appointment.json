@@ -1,0 +1,16 @@
+{
+  "type": "AppointmentCreate",
+  "locationId": "loc_test_001",
+  "id": "ghl_evt_appt_001",
+  "contactId": "ghl_contact_abc123",
+  "appointmentId": "appt_xyz789",
+  "pipelineId": "pipe_main_001",
+  "pipelineStageId": "stage_discovery",
+  "pipelineStageName": "Discovery Call",
+  "email": "john@example.com",
+  "phone": "+15551234567",
+  "firstName": "John",
+  "lastName": "Doe",
+  "name": "John Doe",
+  "dateAdded": "2024-04-24T10:00:00Z"
+}

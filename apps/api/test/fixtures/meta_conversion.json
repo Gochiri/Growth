@@ -1,0 +1,34 @@
+{
+  "object": "page",
+  "entry": [
+    {
+      "id": "123456789",
+      "time": 1714001000,
+      "changes": [
+        {
+          "field": "conversions",
+          "value": {
+            "event_id": "meta_evt_002_purchase",
+            "event_name": "Purchase",
+            "event_time": 1714001000,
+            "event_source_url": "https://example.com/thank-you",
+            "action_source": "website",
+            "user_data": {
+              "em": ["5d41402abc4b2a76b9719d911017c592"],
+              "ph": ["1cc65352430c0bf0f3c5c3b82ab3d01bc4e3f7c5"],
+              "client_ip_address": "192.168.1.100",
+              "client_user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)",
+              "fbp": "fb.1.1714000000.123456789",
+              "fbc": "fb.1.1714000000.IwAR3abc"
+            },
+            "custom_data": {
+              "currency": "USD",
+              "value": 1200.00,
+              "order_id": "ORD-20240425-001"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
